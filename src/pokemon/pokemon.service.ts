@@ -22,12 +22,7 @@ export class PokemonService {
 
     return pokemon;  
     } catch (error) {
-      console.log(error)
-     if (error.code === 11000) {
-      throw new BadRequestException(`Pokemon exists in db ${JSON.stringify(error.keyValue)}`)
-     }
-
-     throw new InternalServerErrorException('Cannot create Pokemon - Check server')
+      this.handleExceptions(error);
     }
     
   }
@@ -60,11 +55,50 @@ export class PokemonService {
     return pokemon
   }
 
-  update(id: number, updatePokemonDto: UpdatePokemonDto) {
-    return updatePokemonDto;
+  async update(term: string, updatePokemonDto: UpdatePokemonDto) {
+    const pokemon = await this.findOne(term);
+
+    try {
+      if(updatePokemonDto.name) 
+      updatePokemonDto.name = updatePokemonDto.name.toLowerCase();
+      await pokemon.updateOne( updatePokemonDto, {new: true});
+
+      return { ...pokemon.toJSON(), ...updatePokemonDto};  
+    } catch (error) {
+      this.handleExceptions(error, 'Update')
+    }
+    
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} pokemon`;
+  async remove(id: string) {
+    const pokemon = await this.findOne(id);
+      try {
+        console.log(pokemon)
+        await pokemon.deleteOne();        
+        return {msg: `Removed`}}
+       catch (error) {
+        this.handleExceptions(error, 'Delete')
+      }
+      
+    }
+      
+  
+
+  private handleExceptions( error: any, type: string = "Create") {
+    if (error.code === 11000) {
+      switch (type) {
+        case 'Create':
+          throw new BadRequestException(`Pokemon with ${JSON.stringify(error.keyValue)} exists. Cannot be created`)    
+        case 'Update':
+          throw new BadRequestException(`Pokemon with ${JSON.stringify(error.keyValue)} exists. Cannot be updated`)    
+        case 'Delete':
+          break
+        default:
+          break;
+      }
+      
+     }
+
+     throw new InternalServerErrorException('Cannot access to Pokemon - Check server')
   }
 }
