@@ -11,7 +11,10 @@ async function bootstrap() {
     new ValidationPipe({
       whitelist: true, //Solo permite ingresar la data que se esta esperando, cualquier otro dato del body lo descarta
       forbidNonWhitelisted: true, //Muestra un mensaje de error en caso de enviar informacion adicional no requerida
-      // transform: true,
+      transform: true,
+      transformOptions: { 
+        enableImplicitConversion: true
+      }
     }),
   )
 
