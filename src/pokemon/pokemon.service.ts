@@ -82,6 +82,15 @@ export class PokemonService {
       }
       
     }
+
+  async deleteAll() {
+    try {
+      await this.pokemonModel.deleteMany();
+      return {msg: `Deleted`}}
+     catch (error) {
+      this.handleExceptions(error, 'Delete')
+    }
+  }
       
   
 
