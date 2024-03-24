@@ -15,6 +15,9 @@ export class SeedService {
   private readonly axios: AxiosInstance = axios;
 
   async executeSeed() {
+
+    this.deleteAllSeed();
+
     const {data} = await this.axios.get<PokeResponse>('https://pokeapi.co/api/v2/pokemon?limit=500')
 
     const insertPromisesArray = [];
@@ -38,6 +41,9 @@ export class SeedService {
   }
 
   async executeSpecificSeed(n: number) {
+
+    this.deleteAllSeed();
+
     const {data} = await this.axios.get<PokeResponse>(`https://pokeapi.co/api/v2/pokemon?limit=${n}`)
 
     const insertPromisesArray = [];
