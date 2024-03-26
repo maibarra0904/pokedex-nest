@@ -7,6 +7,7 @@ import { CommonModule } from './common/common.module';
 import { SeedModule } from './seed/seed.module';
 import { ConfigModule } from '@nestjs/config';
 import { EnvConfiguration } from './config/env.config';
+import { JoiValidationSchema } from './config/joi.validation';
 
 
 
@@ -14,7 +15,8 @@ import { EnvConfiguration } from './config/env.config';
   imports: [
 
     ConfigModule.forRoot({
-      load: [EnvConfiguration]
+      load: [EnvConfiguration],
+      validationSchema: JoiValidationSchema,
     }),
 
     ServeStaticModule.forRoot({
